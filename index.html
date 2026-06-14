@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>foodiee</title>
+    <link rel = "stylesheet" href="css/style.css" />
+</head>
+<body>
+    <div id ="nav-root"> </div>
+
+
+    <!-- hero banner-->
+    <div class="hero">
+        <img class = "hero-img" src="https://precisionautomationinc.com/wp-content/uploads/2020/02/Maximize-Food-Sales-with-Packaging-1.jpg" alt ="foodiee">
+        <div class="hero-content">
+            <h1>
+                Groceries Snacks<br>
+                and Everyday<br>
+                Essentials Delivered
+            </h1>
+            <a href="pages/listing.html" class="btn-green">Shop now</a>
+            <p><strong>Enjoy free delivery</strong> when you shop above ₹250</p>
+        </div>
+    </div>
+
+
+    <!-- best sellers -->
+
+    <div class="section">
+        <div class="section-title">Best Sellers</div>
+        <div class="products-grid" id="homeGrid"></div>
+    </div>
+    <script src="js/common.js"></script>
+    <script src="js/data.js"></script>
+    <script>
+        document.getElementById('nav-root').innerHTML = renderNav('home');
+        const grid = document.getElementById('homeGrid');
+        products.slice(0,4).forEach(p=>{
+            grid.innerHTML += 
+                `<div class="product-card" onclick="location.href='pages/listing.html'">
+                    <img src="${p.img}" alt = "${p.name}" /> 
+                    <div class="product-info">
+                        <div class ="product-name">${p.name}</div>
+                        <div class ="product-price">${p.price} </div>
+                        <div class = "product-stars">${stars(p.rating)}</div>
+                    </div>
+                </div>`
+            
+            
+        })
+    </script>
+
+
+<!-- footer -->
+    <footer class="site-footer">
+        <div class="wrap">
+            <div class="footer-left">
+                <div class="logo">foodiee</div>
+                <p class="muted">Groceries Snacks and Everyday Essentials Delivered.</p>
+                <small class="muted">© 2026 foodiee</small>
+            </div>
+            <div class="footer-links">
+                <a href="pages/listing.html">Shop</a>
+                <a href="pages/listing.html">Products</a>
+                <a href="pages/order.html">Order</a>
+            </div>
+            <div class ="footer-social" >
+                <a href="#" class="social">f</a>
+                <a href="#" class="social">t</a>
+                <a href="#" class="social">P</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

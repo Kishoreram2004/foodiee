@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>foodiee – Products</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+  <div id="nav-root"></div>
+
+  <!-- banner -->
+  <div class="banner-wrap" >
+    <img class="listing-banner" src="https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=1200&q=80" alt="Products banner" />
+    <div class="banner-title">PRODUCTS</div>
+  </div>
+
+
+  <!-- header -->
+  <div  class="listing-header">
+    <div class="listing-title"  id="productCount" >Products (0)</div>
+  </div>
+
+  <!-- toolbar -->
+  <div class="toolbar"> 
+ 
+    <button class="btn-filter"   id="filterToggle" onclick="toggleFilter()" >  ☰ Filter</button>
+
+    <div class="view-icons" >
+      <button class="view-btn active"  id="gridBtn"  onclick="setView('grid')" title= "Grid"> ⊞</button>
+      <button class="view-btn" id="listBtn"  onclick="setView('list')" title ="List" >≡</button>
+    </div>
+
+    <div class="sort-wrap">
+      Sort By:
+
+      <select id="sortSelect" onchange="applyFilters()">
+        <option value="az" >Alphabetically, A–Z</option>
+        <option value="za" >Alphabetically, Z–A</option>
+        <option value="low" >Price: Low to High</option>
+        <option value="high" >Price: High to Low</option>
+        <option value="rating" >Top Rated</option>
+      </select>
+
+    </div>
+  </div>
+
+  <!-- filter-->
+  <div class="filter-panel" id="filterPanel">
+    
+    <div class="filter-group">
+
+      <h4>Categories</h4>
+      <label><input type="checkbox" class="cat-filter" value="Juice" onchange="applyFilters()"> Juice</label>
+      <label><input type="checkbox" class="cat-filter" value="Snacks" onchange="applyFilters()"> Snacks</label>
+      <label><input type="checkbox" class="cat-filter" value="Ice Cream" onchange="applyFilters()"> Ice Cream</label>
+      <label><input type="checkbox" class="cat-filter" value="Fruits" onchange="applyFilters()"> Fruits</label>
+      <label><input type="checkbox" class="cat-filter" value="Vegetables" onchange="applyFilters()"> Vegetables</label>
+    
+    </div>
+
+    <div class="filter-group">
+      <h4>Type</h4>
+      <label><input type="checkbox" class="type-filter" value="Fresh" onchange="applyFilters()"> Fresh</label>
+      <label><input type="checkbox" class="type-filter" value="Packaged" onchange="applyFilters()"> Packaged</label>
+      <label><input type="checkbox" class="type-filter" value="Frozen" onchange="applyFilters()"> Frozen</label>
+    </div>
+
+    <div class="filter-group">
+
+      <h4>Min Rating</h4>
+      <label><input type="radio" name="rating" class="rating-filter" value="0" checked onchange="applyFilters()"> All</label>
+      <label><input type="radio" name="rating" class="rating-filter" value="3" onchange="applyFilters()"> ★★★ &amp; up</label>
+      <label><input type="radio" name="rating" class="rating-filter" value="4" onchange="applyFilters()"> ★★★★ &amp; up</label>
+      <label><input type="radio" name="rating" class="rating-filter" value="5" onchange="applyFilters()"> ★★★★★ only</label>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="listing-grid" id="listingGrid"></div>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/common.js"></script>
+
+  <script>
+    document.getElementById('nav-root').innerHTML = renderNav('listing')
+
+    let viewMode = 'grid';
+
+    function toggleFilter() {
+      const panel = document.getElementById('filterPanel')
+      const btn = document.getElementById('filterToggle')
+      panel.classList.toggle('open')
+      btn.classList.toggle('active')
+    }
+
+    function setView(mode) {
+      viewMode = mode;
+      const grid = document.getElementById('listingGrid')
+      const gridBtn = document.getElementById('gridBtn')
+      const listBtn = document.getElementById('listBtn')
+
+      if (mode === 'grid') {
+        grid.classList.remove('list-view')
+        gridBtn.classList.add('active')
+        listBtn.classList.remove('active')
+      } else {
+        grid.classList.add('list-view')
+        listBtn.classList.add('active')
+        gridBtn.classList.remove('active')
+      }
+    }
+
+    function applyFilters() {
+      const cats = [...document.querySelectorAll('.cat-filter:checked')].map(x => x.value)
+      const types = [...document.querySelectorAll('.type-filter:checked')].map(x => x.value)
+      const minRating = parseInt(document.querySelector('.rating-filter:checked').value)
+      const sort = document.getElementById('sortSelect').value;
+
+      let filtered = products.filter(p => {
+        if (cats.length && !cats.includes(p.category)) return false;
+        if (types.length && !types.includes(p.type)) return false
+        if (p.rating < minRating) return false
+        return true;
+      });
+
+      filtered.sort((a, b) => {
+
+        if (sort === 'az') return a.name.localeCompare(b.name)
+        if (sort === 'za') return b.name.localeCompare(a.name)
+        if (sort === 'low') return a.price -b.price
+        if (sort === 'high') return b.price - a.price
+        if (sort === 'rating') return b.rating- a.rating
+      });
+
+      renderGrid(filtered);
+    }
+
+    function renderGrid(list) {
+      const grid = document.getElementById('listingGrid')
+      document.getElementById('productCount').textContent = `Products (${list.length})`
+
+
+      if (!list.length) {
+        grid.innerHTML = '<p class="empty">No products match your filters.</p>';
+        return;
+      }
+      grid.innerHTML = list.map(p => `
+        <div class="product-card" onclick="location.href='detail.html?id=${p.id}'">
+          <img src="${p.img}" alt="${p.name}" />
+          <div class="product-info">
+            <div class="product-name">${p.name}</div>
+            <div>
+                <span class="product-price">₹${p.price.toFixed(2)}</span>
+            </div>
+            <div class="product-stars">${stars(p.rating)} <small style="color:#888">(${p.reviews})</small></div>
+          </div>
+        </div>`).join('');
+    }
+
+    applyFilters();
+  </script>
+  </script>
+
+
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-left">
+        <div class="logo">foodiee</div>
+        <p class="muted">Groceries Snacks and Everyday Essentials Delivered.</p>
+        <small class="muted">© 2026 foodiee</small>
+      </div>
+      <div class="footer-links">
+        <a href="../index.html">Home</a>
+        <a href="listing.html">Products</a>
+        <a href="order.html">Order</a>
+        <a href="detail.html">Product</a>
+      </div>
+      <div class="footer-social">
+        <a href="#" class="social">f</a>
+        <a href="#" class="social">t</a>
+        <a href="#" class="social">P</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

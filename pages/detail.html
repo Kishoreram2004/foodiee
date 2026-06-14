@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>foodiee – Product Detail</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+  <div id="nav-root"></div>
+
+  <div class="breadcrumb">
+    <a href="../index.html">Shop</a> &rsaquo; <a href="listing.html">Products</a> &rsaquo; <span id="breadName"></span>
+  </div>
+
+  <div class="detail-wrap">
+    <!-- leftside -->
+
+    <div>
+
+      <img class="main-img"  id="mainImg" src="" alt="Product" />
+      <div class="thumb-list">
+        <button class="thumb-arrow" onclick="scrollThumbs(-1)">‹</button>
+        <div id="thumbs" style="display:flex;gap:8px;overflow:hidden;"></div>
+        <button class="thumb-arrow"  onclick="scrollThumbs(1)" > ›</button>
+      </div>
+
+    </div>
+
+    <!-- right side -->
+    <div class="detail-info">
+      <h2 id="pName"></h2>
+
+      <div class="price-row">
+        <span class="price-now" id="pPrice"></span>
+      </div>
+
+      <div class="stars-row" id="pStars"></div>
+      <p class="detail-desc" id="pDesc"></p>
+
+      <div class="action-row" >
+        <button class="btn-cart" onclick="addToCart()">ADD TO CART</button>
+        <button  class="btn-buynow" onclick="buyNow()">Buy Now</button>
+      </div>
+
+      <button class="wishlist-btn">♡ WISHLIST</button >
+
+      <div class="share-row">
+        SHARE:
+        <div class="share-icon share-fb" >f</div>
+        <div class="share-icon share-tw">t</div>
+        <div class="share-icon share-pt">P</div>
+        
+      </div>
+
+    </div>
+  </div>
+
+  <!-- tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab(this,'desc')">DESCRIPTION</button>
+    <button class="tab-btn" onclick="showTab(this,'reviews')">REVIEWS</button>
+    <button class="tab-btn" onclick="showTab(this,'videos')">VIDEOS</button>
+    <button class="tab-btn" onclick="showTab(this,'comments')">COMMENTS</button>
+  </div>
+
+  <div class="tab-content active" id="tab-desc"></div>
+  <div class="tab-content" id="tab-reviews">No reviews yet.</div>
+  <div class="tab-content" id="tab-videos">No videos yet.</div>
+  <div class="tab-content" id="tab-comments">No comments yet.</div>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/common.js"></script>
+
+  <script>
+    document.getElementById('nav-root').innerHTML= renderNav('detail')
+
+    const params = new URLSearchParams( location.search)
+    const id =parseInt(params.get('id'))
+    const p = products.find(x => x.id === id) || products[0];
+
+    document.getElementById('breadName').textContent = p.name
+    document.getElementById('pName').textContent = p.name
+    document.getElementById('pPrice').textContent = '₹' +p.price.toFixed(2);
+    document.getElementById('pStars').innerHTML= `${stars(p.rating)} <span>${p.reviews} Reviews</span>`
+    document.getElementById('pDesc').textContent =p.desc
+    document.getElementById('tab-desc').textContent = p.desc
+    document.getElementById('mainImg').src =p.img;
+
+    const thumbImgs = [p.img, p.img, p.img];
+
+    const thumbsEl =document.getElementById('thumbs')
+    thumbImgs.forEach((src, i) => {
+      const img = document.createElement('img');
+
+      img.src = src
+      img.className = i === 0 ? 'active' : ''
+      img.onclick = () => {
+        document.getElementById('mainImg').src = src
+        thumbsEl.querySelectorAll('img').forEach(x => x.classList.remove('active'))
+        img.classList.add('active')
+      };
+      thumbsEl.appendChild(img);
+    });
+
+
+    function scrollThumbs(dir) {
+      thumbsEl.scrollLeft+= dir * 80
+    }
+
+    function addToCart() {
+      const n = getCart() + 1
+      setCart(n)
+      document.getElementById('cartCount').textContent = n
+    }
+
+    function buyNow() {
+      location.href = 'order.html'
+    }
+
+    function showTab(btn, tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'))
+      btn.classList.add('active')
+      document.getElementById('tab-' +tab).classList.add('active')
+    }
+  </script>
+  </script>
+
+  <footer class="site-footer">
+    
+    <div class="wrap">
+      <div class="footer-left">
+        <div class="logo">foodiee</div>
+        <p class="muted">Groceries Snacks and Everyday Essentials Delivered.</p>
+        <small class="muted">© 2026 foodiee</small>
+      </div>
+
+      <div class="footer-links">
+        <a href="../index.html">Home</a>
+        <a href="listing.html">Products</a>
+        <a href="order.html">Order</a>
+        <a href="detail.html">Product</a>
+      </div>
+
+      <div class="footer-social">
+        <a href="#" class="social">f</a>
+        <a href="#" class="social">t</a>
+        <a href="#" class="social">P</a>
+      </div>
+    </div>
+
+  </footer>
+
+</body>
+</html>
